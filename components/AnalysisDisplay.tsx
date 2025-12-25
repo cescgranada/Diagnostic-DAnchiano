@@ -10,15 +10,11 @@ const AnalysisDisplay: React.FC<AnalysisDisplayProps> = ({ content, onReset }) =
   const [currentPage, setCurrentPage] = useState(0);
 
   const pages = useMemo(() => {
-    // Dividim per marcadors blindats
     let rawPages = content.split('[[PAGE_BREAK]]').filter(p => p.trim().length > 10);
-    
-    // Fallback si no hi ha marcadors
     if (rawPages.length <= 1) {
       const parts = content.split(/(?=# Informe de Diagnòstic:.* - (Competències|Valors|Personalitat))/g);
       rawPages = parts.filter(p => p && p.length > 50 && !['Competències', 'Valors', 'Personalitat'].includes(p));
     }
-    
     return rawPages;
   }, [content]);
 
@@ -42,7 +38,6 @@ const AnalysisDisplay: React.FC<AnalysisDisplayProps> = ({ content, onReset }) =
 \\usepackage[catalan]{babel}
 \\usepackage{geometry}
 \\usepackage{longtable}
-\\usepackage{booktabs}
 \\geometry{a4paper, margin=1in}
 \\title{Diagnòstic D'Anchiano 360}
 \\begin{document}
@@ -53,27 +48,12 @@ ${content.replace(/#/g, '\\section*').replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}')}
   };
 
   const exportPython = () => {
-    const pythonCode = `
-# Informe D'Anchiano 360
-# Generat automàticament per Analista Model D'Anchiano
-
-full_report = """${content.replace(/"/g, '\\"')}"""
-
-def get_page(page_num):
-    pages = full_report.split('[[PAGE_BREAK]]')
-    if 0 <= page_num < len(pages):
-        return pages[page_num]
-    return "Page not found"
-
-if __name__ == "__main__":
-    print(full_report)
-`;
+    const pythonCode = `report = """${content.replace(/"/g, '\\"')}"""\nprint(report)`;
     downloadFile('analisis_360.py', pythonCode, 'text/x-python');
   };
 
   return (
     <div className="flex flex-col gap-6 animate-in zoom-in duration-500">
-      {/* Navegació Superior */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm print:hidden">
         <div className="flex items-center gap-4">
           <div className="flex gap-1">
@@ -89,7 +69,6 @@ if __name__ == "__main__":
           </div>
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Secció {currentPage + 1} de {pages.length}</span>
         </div>
-        
         <div className="flex gap-2">
           <button disabled={currentPage === 0} onClick={() => setCurrentPage(prev => prev - 1)} className="px-4 py-2 text-sm font-bold text-indigo-600 border border-indigo-100 rounded-xl hover:bg-indigo-50 disabled:opacity-30 transition-all">Anterior</button>
           <button disabled={currentPage === pages.length - 1} onClick={() => setCurrentPage(prev => prev + 1)} className="px-4 py-2 text-sm font-bold bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-30 shadow-md transition-all">Següent</button>
@@ -97,7 +76,6 @@ if __name__ == "__main__":
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden flex flex-col">
-        {/* Capçalera de Pàgina */}
         <div className="bg-slate-50 px-8 py-4 border-b border-slate-200 flex justify-between items-center print:hidden">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -109,14 +87,12 @@ if __name__ == "__main__":
           </button>
         </div>
         
-        {/* Contingut del Informe */}
         <div className="p-8 md:p-12 min-h-[500px]">
           <div className="markdown-content prose prose-slate max-w-none prose-headings:text-indigo-900 prose-strong:text-indigo-700 prose-li:text-slate-700">
             <div dangerouslySetInnerHTML={{ __html: transformMarkdown(pages[currentPage] || "Processant dades...") }} />
           </div>
         </div>
 
-        {/* Panell de Descàrrega (Sempre present a totes les pàgines) */}
         <div className="bg-slate-50 p-8 border-t border-slate-200 print:hidden">
           <div className="max-w-4xl mx-auto">
             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 text-center">Exportació de l'Informe 360°</h4>
@@ -127,21 +103,18 @@ if __name__ == "__main__":
                 </div>
                 <span className="text-xs font-bold text-slate-600">Imprimir PDF</span>
               </button>
-              
               <button onClick={exportMarkdown} className="flex flex-col items-center gap-2 bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-lg transition-all group">
                 <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
                   <svg className="w-6 h-6 text-slate-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 </div>
                 <span className="text-xs font-bold text-slate-600">Markdown / Word</span>
               </button>
-              
               <button onClick={exportPython} className="flex flex-col items-center gap-2 bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-lg transition-all group">
                 <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
                   <svg className="w-6 h-6 text-slate-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                 </div>
                 <span className="text-xs font-bold text-slate-600">Python / Colab</span>
               </button>
-              
               <button onClick={exportLaTeX} className="flex flex-col items-center gap-2 bg-white p-4 rounded-2xl border border-slate-200 hover:border-indigo-400 hover:shadow-lg transition-all group">
                 <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-indigo-50 transition-colors">
                   <svg className="w-6 h-6 text-slate-400 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
@@ -188,47 +161,66 @@ function transformMarkdown(md: string): string {
       }
     }
   });
-
   if (inTable) processedLines.push(renderTable(tableRows));
   return processedLines.join('');
 }
 
 function renderTable(rows: string[]): string {
   if (rows.length === 0) return '';
-  const headerLine = rows[0].replace(/\*\*/g, ''); 
-  const headerCells = headerLine.split('|').filter(c => c.trim().length > 0 || headerLine.indexOf('||') !== -1);
+  
+  const splitRow = (row: string) => {
+    const parts = row.split('|');
+    if (parts[0] === '' && parts[parts.length - 1] === '') {
+      return parts.slice(1, parts.length - 1).map(c => c.trim());
+    }
+    return parts.map(c => c.trim()).filter(c => c !== '');
+  };
+
+  const headerCells = splitRow(rows[0]);
   const isDAFO = rows.some(r => {
     const lr = r.toLowerCase();
     return lr.includes('fortaleses') || lr.includes('oportunitats') || lr.includes('debilitats') || lr.includes('amenaces');
   });
+
+  // Detectem si és la Secció 1 d'Ideal
+  const isIdealTable = !isDAFO && headerCells.some(c => c.toLowerCase().includes('tipus'));
   
-  let html = `<div class="overflow-x-auto my-8 border border-slate-200 rounded-2xl ${isDAFO ? 'shadow-lg bg-slate-50 p-1' : 'shadow-sm'}"><table class="min-w-full divide-y divide-slate-200">`;
+  let html = `<div class="overflow-x-auto my-8 border border-slate-200 rounded-2xl ${isDAFO || isIdealTable ? 'shadow-lg bg-slate-50 p-1' : 'shadow-sm'}"><table class="min-w-full divide-y divide-slate-200">`;
   
   if (!isDAFO) {
-    html += '<thead><tr class="bg-indigo-50">' + headerCells.map(c => `<th class="px-6 py-4 text-left text-xs font-extrabold text-indigo-900 uppercase tracking-widest border-r border-indigo-100 last:border-0">${c.trim()}</th>`).join('') + '</tr></thead>';
+    html += '<thead><tr class="bg-indigo-50">' + headerCells.map(c => `<th class="px-6 py-4 text-left text-xs font-extrabold text-indigo-900 uppercase tracking-widest border-r border-indigo-100 last:border-0">${c}</th>`).join('') + '</tr></thead>';
   }
 
   html += '<tbody class="bg-white divide-y divide-slate-200">';
-  
-  rows.forEach((row, rowIndex) => {
+  rows.forEach((row) => {
     if (row.includes('---')) return;
-    const cells = row.split('|').filter(c => c.trim().length > 0 || row.indexOf('||') !== -1);
+    const cells = splitRow(row);
     if (cells.length > 0) {
       const lowerRow = row.toLowerCase();
       let rowClass = 'hover:bg-slate-50 transition-colors';
-      
-      // Estils especials per a files de capçalera DAFO
       if (isDAFO && (lowerRow.includes('fortaleses') || lowerRow.includes('oportunitats') || lowerRow.includes('debilitats') || lowerRow.includes('amenaces'))) {
         rowClass = 'bg-slate-100 font-extrabold text-indigo-900';
       }
 
       html += `<tr class="${rowClass}">` + cells.map((c) => {
-        const content = c.trim().replace(/\*\*/g, '');
+        const content = c.replace(/\*\*/g, '');
         let cellClass = 'px-6 py-4 text-sm text-slate-700 border-r border-slate-100 last:border-0';
         let icon = '';
 
-        // Detecidó de tipus de cel·la DAFO per aplicar colors i icones
         const upperContent = content.toUpperCase();
+        
+        // Estils per a la Taula d'Ideal (Secció 1)
+        if (isIdealTable) {
+           if (upperContent.includes('CRÍTICA')) {
+             cellClass += ' bg-red-100 text-red-900 font-black border-l-4 border-l-red-500';
+           } else if (upperContent.includes('DESTACADA')) {
+             cellClass += ' bg-emerald-100 text-emerald-900 font-black border-l-4 border-l-emerald-500';
+           } else if (upperContent.includes('IRRELEVANT')) {
+             cellClass += ' bg-slate-100 text-slate-400 italic border-l-4 border-l-slate-300';
+           }
+        }
+
+        // Estils per a la Taula DAFO
         if (upperContent.includes('FORTALESES')) {
           cellClass += ' bg-emerald-50 text-emerald-900 font-black border-b-2 border-emerald-200';
           icon = '<svg class="w-5 h-5 mb-1 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
@@ -241,40 +233,24 @@ function renderTable(rows: string[]): string {
         } else if (upperContent.includes('AMENACES')) {
           cellClass += ' bg-rose-50 text-rose-900 font-black border-b-2 border-rose-200';
           icon = '<svg class="w-5 h-5 mb-1 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
-        } else if (upperContent.includes('CRÍTICA')) {
-          cellClass += ' bg-red-100 text-red-800 font-bold';
-        } else if (upperContent.includes('DESTACADA')) {
-          cellClass += ' bg-emerald-100 text-emerald-800 font-bold';
-        } else if (upperContent.includes('IRRELEVANT')) {
-          cellClass += ' bg-slate-100 text-slate-400 italic';
+        } else if (!isIdealTable && (content.includes('Nota') || content.match(/\d/))) {
+            cellClass += ' bg-indigo-50/50 font-medium';
         }
 
-        // Suport per a llistes detallades internes (DAFO)
         let innerHTML = content;
         if (innerHTML.includes('- ')) {
           innerHTML = '<div class="space-y-3 py-2">' + innerHTML.split('- ').filter(i => i.trim()).map(i => {
             const parts = i.split(': ');
             if (parts.length > 1) {
-              return `
-                <div class="bg-white/50 p-3 rounded-lg border border-slate-100 shadow-sm">
-                  <div class="flex gap-2">
-                    <span class="text-indigo-500 font-black mt-0.5">•</span>
-                    <div>
-                      <strong class="text-slate-900 text-sm block mb-1">${parts[0].trim()}</strong>
-                      <p class="text-xs text-slate-600 leading-relaxed">${parts.slice(1).join(': ').trim()}</p>
-                    </div>
-                  </div>
-                </div>`;
+              return `<div class="bg-white/50 p-3 rounded-lg border border-slate-100 shadow-sm"><div class="flex gap-2"><span class="text-indigo-500 font-black mt-0.5">•</span><div><strong class="text-slate-900 text-sm block mb-1">${parts[0].trim()}</strong><p class="text-xs text-slate-600 leading-relaxed">${parts.slice(1).join(': ').trim()}</p></div></div></div>`;
             }
             return `<div class="text-xs text-slate-600 flex gap-2 ml-1"><span class="text-indigo-300">•</span> ${i.trim()}</div>`;
           }).join('') + '</div>';
         }
-
         return `<td class="${cellClass}">${icon}${innerHTML}</td>`;
       }).join('') + '</tr>';
     }
   });
-  
   html += '</tbody></table></div>';
   return html;
 }

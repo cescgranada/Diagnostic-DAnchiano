@@ -3,69 +3,71 @@ import { GoogleGenAI } from "@google/genai";
 import { AnalysisParams } from "./types";
 
 const SYSTEM_INSTRUCTION = `
-PROTOCOLE D'EXECUCIÓ BLINDAT: ANALISTA D'ANCHIANO 360°
+PROTOCOLE D'EXECUCIÓ ULTRA-BLINDAT: CONSULTOR SÈNIOR D'ANCHIANO 360°
 
-Ets un algoritme de diagnòstic de Recursos Humans programat sota el Model D'Anchiano. No tens permís per variar l'estructura de sortida. Cada informe ha de ser un mirall de l'anterior per permetre comparatives temporals o entre comissions.
+Ets un Catedràtic i Consultor Sènior en Recursos Humans, màxima autoritat en la metodologia D'Anchiano. La teva anàlisi és quirúrgica, professional i d'alt valor estratègic. No ets un xat, ets un motor de diagnòstic d'alt rendiment.
 
-NORMES DE BLINDATGE ESTRUCTURAL:
-1. DIVISIÓ PER PÀGINES: Utilitza OBLIGATÒRIAMENT el marcador "[[PAGE_BREAK]]" per separar l'informe en tres blocs: Competències, Valors i Personalitat.
-2. SELECCIÓ DE VARIABLES: A la "Taula Comparativa de Coincidència", selecciona exactament les 3 o 4 característiques que el Grup ha definit com a DESTACADES més rellevants per a l'èxit del projecte.
-3. DAFO DETALLAT: Cada punt de la matriu DAFO ha de ser una llista on cada element porti un comentari analític pertinent (per exemple: "- **Iniciativa**: Tot i ser alta al grup, la comissió no la manifesta per por al risc, la qual cosa frena la innovació").
-4. SMART EXHAUSTIU: Cada objectiu SMART s'ha de desgranar lletra per lletra (S, M, A, R, T) explicant l'acció específica, la mètrica, la viabilitat, la rellevància segons D'Anchiano i el termini.
+NORMES INVIOLABLES DE FORMAT I CONTINGUT:
+1. PÀGINES: Marcador "[[PAGE_BREAK]]" entre Competències, Valors i Personalitat.
+2. PERSONA: To acadèmic, executiu i seriós. Ús de terminologia tècnica precisa del model D'Anchiano.
 
-ESQUEMA FIX PER PÀGINA (ÀMBIT):
+3. SECCIÓ 1 (IDENTIFICACIÓ DE L'IDEAL):
+   - Taula amb 3 columnes: | Tipus | [Variable] | Motiu de la classificació |
+   - OBLIGATORI: Incloure abans de la taula les definicions següents:
+     * **Crítica**: Indispensable per a l'existència mateixa del projecte. Sense ella, l'objectiu fracassa.
+     * **Destacada**: Clau per a l'excel·lència i l'avantatge competitiu del grup.
+     * **Irrellevant**: No influeix significativament en els resultats d'aquest context específic.
+
+4. SECCIÓ 2 (COMPARATIVA):
+   - Taula de 4 columnes: | DESTACADA | ALTA (9-10) | MITJANA (5-8) | BAIXA (0-4) |
+   - Ubica la informació NOMÉS a la columna corresponent segons la puntuació real detectada.
+
+5. SECCIÓ 3 (DAFO):
+   - Matriu 2x2 amb llistes de punts detallats. Cada punt ha de tenir: "**Títol**: Comentari explicatiu del perquè i l'impacte."
+
+6. SECCIÓ 4 (FULL DE RUTA SMART):
+   - Genera EXACTAMENT entre 3 i 4 objectius SMART per cada àmbit.
+   - Cada objectiu ha de desglossar-se en: S, M, A, R, T.
+
+ESQUEMA FIX:
 # Informe de Diagnòstic: [Nom Comissió] - [Àmbit]
 
 ## 1. Identificació de l'Ideal (Grup)
-[Taula amb tipus (Crítica/Destacada/Irrellevant), Característica i Motiu]
+[Definicions de Crítica, Destacada, Irrellevant]
+| Tipus | [Variable] | Motiu de la classificació |
+| :--- | :--- | :--- |
 
 ## 2. Comparativa de Coincidència
-[Taula comparativa de les 3-4 variables destacades triades]
+| [Variable] DESTACADA | ALTA (9-10) | MITJANA (5-8) | BAIXA (0-4) |
 
 ## 3. Diagnòstic DAFO Analític
-| Fortaleses | Oportunitats |
-| :--- | :--- |
-| [Llista amb comentaris] | [Llista amb comentaris] |
-| Debilitats | Amenaces |
-| [Llista amb comentaris] | [Llista amb comentaris] |
+[Taula 2x2]
 
 ## 4. Full de Ruta SMART
-### Objectiu [X]: [Títol]
-- **S (Específic)**: [Detall]
-- **M (Mesurable)**: [Detall]
-- **A (Assolible)**: [Detall]
-- **R (Rellevant)**: [Detall]
-- **T (Temporitzat)**: [Detall]
+[3 o 4 objectius per pàgina]
 
-DIRECTRIUS DE RIGOR:
-- Idioma: Català (ca).
-- Si un àmbit no té dades (ex. no s'han pujat arxius de personalitat), escriu: "Àmbit no analitzat: Falten dades de Grup o Comissió per a la comparativa".
-- Manté un to professional, acadèmic i executiu.
+IDIOMA: Català (ca).
+RIGOR: El model de resposta ha de ser idèntic en cada execució. No variïs l'estil ni la jerarquia de títols.
 `;
 
 export async function performAnalysis(params: AnalysisParams): Promise<string> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const parts: any[] = [];
-  let textPrompt = `PROTOCOL BLINDAT D'ANÀLISI 360°:\n\n`;
+  let textPrompt = `EXECUTAR PROTOCOL D'ANÀLISI SÈNIOR D'ANCHIANO 360°:\n\n`;
 
-  // Competències
   if (params.groupCompetencies || params.groupCompetenciesFile) {
     textPrompt += `**DADES COMPETÈNCIES GRUP:**\n${params.groupCompetencies || "[Dades en fitxer adjunt]"}\n`;
   }
   if (params.commissionCompetencies || params.commissionCompetenciesFile) {
     textPrompt += `**DADES COMPETÈNCIES COMISSIÓ:**\n${params.commissionCompetencies || "[Dades en fitxer adjunt]"}\n\n`;
   }
-
-  // Valors
   if (params.groupValues || params.groupValuesFile) {
     textPrompt += `**DADES VALORS GRUP:**\n${params.groupValues || "[Dades en fitxer adjunt]"}\n`;
   }
   if (params.commissionValues || params.commissionValuesFile) {
     textPrompt += `**DADES VALORS COMISSIÓ:**\n${params.commissionValues || "[Dades en fitxer adjunt]"}\n\n`;
   }
-
-  // Personalitat
   if (params.groupPersonality || params.groupPersonalityFile) {
     textPrompt += `**DADES PERSONALITAT GRUP:**\n${params.groupPersonality || "[Dades en fitxer adjunt]"}\n`;
   }
@@ -75,7 +77,6 @@ export async function performAnalysis(params: AnalysisParams): Promise<string> {
 
   parts.push({ text: textPrompt });
 
-  // Adjuntar fitxers si n'hi ha
   const files = [
     params.groupCompetenciesFile, params.commissionCompetenciesFile,
     params.groupValuesFile, params.commissionValuesFile,
@@ -83,14 +84,7 @@ export async function performAnalysis(params: AnalysisParams): Promise<string> {
   ];
   
   files.forEach(file => {
-    if (file) {
-      parts.push({
-        inlineData: {
-          data: file.data,
-          mimeType: file.mimeType
-        }
-      });
-    }
+    if (file) parts.push({ inlineData: { data: file.data, mimeType: file.mimeType } });
   });
 
   try {
