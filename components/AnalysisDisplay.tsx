@@ -159,7 +159,7 @@ if __name__ == "__main__":
 function transformMarkdown(md: string): string {
   let html = md
     .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-extrabold text-indigo-900 mt-2 mb-6 border-b-2 border-indigo-100 pb-2">$1</h1>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-indigo-800 mt-8 mb-4 border-b pb-2">$2</h2>')
+    .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-indigo-800 mt-8 mb-4 border-b pb-2">$1</h2>')
     .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">$1</h3>')
     .replace(/\*\*(.*)\*\*/gim, '<strong class="font-bold text-indigo-700">$1</strong>')
     .replace(/^\d+\.\s(.*)/gim, '<p class="ml-2 mb-2 font-medium text-slate-800">$1</p>')
