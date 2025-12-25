@@ -12,10 +12,24 @@ export interface FileData {
 }
 
 export interface AnalysisParams {
-  groupProfile: string;
-  groupFile?: FileData;
-  commissionProfile: string;
-  commissionFile?: FileData;
+  // Competències
+  groupCompetencies: string;
+  groupCompetenciesFile?: FileData;
+  commissionCompetencies: string;
+  commissionCompetenciesFile?: FileData;
+  
+  // Valors
+  groupValues: string;
+  groupValuesFile?: FileData;
+  commissionValues: string;
+  commissionValuesFile?: FileData;
+  
+  // Personalitat
+  groupPersonality: string;
+  groupPersonalityFile?: FileData;
+  commissionPersonality: string;
+  commissionPersonalityFile?: FileData;
+
   model: string;
   temperature: number;
 }
