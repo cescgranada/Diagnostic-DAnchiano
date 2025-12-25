@@ -21,7 +21,7 @@ const AnalysisDisplay: React.FC<AnalysisDisplayProps> = ({ content, onReset }) =
   };
 
   const exportMarkdown = () => {
-    downloadFile('diagnostic-anchiano.md', content, 'text/markdown');
+    downloadFile('informe-talent-anchiano.md', content, 'text/markdown');
   };
 
   const exportLaTeX = () => {
@@ -32,7 +32,7 @@ const AnalysisDisplay: React.FC<AnalysisDisplayProps> = ({ content, onReset }) =
 \\usepackage{geometry}
 \\usepackage{longtable}
 \\geometry{a4paper, margin=1in}
-\\title{Informe de Diagnòstic Talent D'Anchiano}
+\\title{Diagnòstic D'Anchiano}
 \\author{Analista IA}
 \\date{\\today}
 
@@ -46,21 +46,17 @@ ${content
 }
 
 \\end{document}`;
-    downloadFile('diagnostic-anchiano.tex', latex, 'application/x-tex');
+    downloadFile('informe-talent-anchiano.tex', latex, 'application/x-tex');
   };
 
   const exportPython = () => {
-    const pythonCode = `# Diagnòstic D'Anchiano - Google Colab
-report_data = """
-${content.replace(/"/g, '\\"')}
-"""
-def show_report():
-    print(report_data)
-
+    const pythonCode = `# Diagnòstic D'Anchiano
+report = """${content.replace(/"/g, '\\"')}"""
+def print_report():
+    print(report)
 if __name__ == "__main__":
-    show_report()
-`;
-    downloadFile('diagnosi_anchiano.py', pythonCode, 'text/x-python');
+    print_report()`;
+    downloadFile('analisis_anchiano.py', pythonCode, 'text/x-python');
   };
 
   return (
@@ -68,16 +64,16 @@ if __name__ == "__main__":
       <div className="bg-slate-50 px-8 py-4 border-b border-slate-200 flex justify-between items-center print:hidden">
         <div className="flex items-center gap-2">
           <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-pulse"></div>
-          <span className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500">Informe de Diagnòstic</span>
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Resultats de l'Anàlisi</span>
         </div>
         <button 
           onClick={onReset}
-          className="text-indigo-600 hover:text-indigo-800 text-sm font-bold flex items-center gap-2 transition-transform hover:scale-105"
+          className="text-indigo-600 hover:text-indigo-800 text-sm font-bold flex items-center gap-2 transition-all hover:translate-x-[-4px]"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Nova Consulta
+          Nova Diagnosi
         </button>
       </div>
       
@@ -89,17 +85,17 @@ if __name__ == "__main__":
 
       <div className="bg-slate-50 px-8 py-10 border-t border-slate-200 print:hidden">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <button onClick={() => window.print()} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 hover:shadow-sm transition-all">
-            <span className="text-sm font-extrabold text-slate-700">Imprimir PDF</span>
+          <button onClick={() => window.print()} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 shadow-sm transition-all group">
+            <span className="text-sm font-extrabold text-slate-700 group-hover:text-indigo-600">Imprimir PDF</span>
           </button>
-          <button onClick={exportMarkdown} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 hover:shadow-sm transition-all">
-            <span className="text-sm font-extrabold text-slate-700">Markdown (Word)</span>
+          <button onClick={exportMarkdown} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 shadow-sm transition-all group">
+            <span className="text-sm font-extrabold text-slate-700 group-hover:text-indigo-600">Markdown (Word)</span>
           </button>
-          <button onClick={exportLaTeX} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 hover:shadow-sm transition-all">
-            <span className="text-sm font-extrabold text-slate-700">LaTeX (Overleaf)</span>
+          <button onClick={exportLaTeX} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 shadow-sm transition-all group">
+            <span className="text-sm font-extrabold text-slate-700 group-hover:text-indigo-600">LaTeX (Overleaf)</span>
           </button>
-          <button onClick={exportPython} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 hover:shadow-sm transition-all">
-            <span className="text-sm font-extrabold text-slate-700">Python (Colab)</span>
+          <button onClick={exportPython} className="flex items-center justify-center gap-3 bg-white border border-slate-200 p-4 rounded-2xl hover:border-indigo-300 shadow-sm transition-all group">
+            <span className="text-sm font-extrabold text-slate-700 group-hover:text-indigo-600">Python (Colab)</span>
           </button>
         </div>
       </div>
@@ -108,13 +104,11 @@ if __name__ == "__main__":
 };
 
 function transformMarkdown(md: string): string {
-  // Processament previ per evitar duplicitats de numeració i formatar títols
   let html = md
     .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-extrabold text-indigo-900 mt-10 mb-6 border-b-2 border-indigo-100 pb-2">$1</h1>')
     .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-bold text-indigo-800 mt-8 mb-4 border-b pb-2">$1</h2>')
     .replace(/^### (.*$)/gim, '<h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">$1</h3>')
     .replace(/\*\*(.*)\*\*/gim, '<strong class="font-bold text-indigo-700">$1</strong>')
-    // Numeració intel·ligent: Si la línia ja comença amb número, la mantenim sense crear llista HTML que dupliqui el número
     .replace(/^\d+\.\s(.*)/gim, (match) => `<p class="ml-2 mb-2 font-medium text-slate-800">${match}</p>`)
     .replace(/\n- (.*)/gim, '<li class="ml-6 mb-1 text-slate-700 list-disc">$1</li>');
 
@@ -149,33 +143,44 @@ function transformMarkdown(md: string): string {
 
 function renderTable(rows: string[]): string {
   if (rows.length === 0) return '';
-  
-  // Neteja de caràcters de format en la capçalera
   const headerLine = rows[0].replace(/\*\*/g, ''); 
   const headerCells = headerLine.split('|').filter(c => c.trim().length > 0 || headerLine.indexOf('||') !== -1);
   
-  let html = '<div class="overflow-x-auto my-8 border border-slate-200 rounded-2xl shadow-sm"><table class="min-w-full divide-y divide-slate-200"><thead>';
+  let html = '<div class="overflow-x-auto my-8 border border-slate-200 rounded-2xl shadow-md"><table class="min-w-full divide-y divide-slate-200"><thead>';
   html += '<tr class="bg-indigo-50">' + headerCells.map(c => `<th class="px-6 py-4 text-left text-xs font-extrabold text-indigo-900 uppercase tracking-widest border-r border-indigo-100 last:border-0">${c.trim()}</th>`).join('') + '</tr></thead>';
-  
   html += '<tbody class="bg-white divide-y divide-slate-200">';
   
   rows.slice(1).forEach(row => {
     if (row.includes('---')) return;
     const cells = row.split('|').filter(c => c.trim().length > 0 || row.indexOf('||') !== -1);
     if (cells.length > 0) {
-      // Detecció DAFO per aplicar estil de títol en cel·la si és necessari
       const lowerRow = row.toLowerCase();
-      const isHeaderRow = lowerRow.includes('fortaleses') || lowerRow.includes('oportunitats') || lowerRow.includes('debilitats') || lowerRow.includes('amenaces');
-      const rowClass = isHeaderRow ? 'bg-slate-50 font-bold' : 'hover:bg-indigo-50/10 transition-colors';
       
-      html += `<tr class="${rowClass}">` + cells.map(c => {
-        let content = c.trim().replace(/\*\*/g, '');
-        // Suport bàsic per a llistes dins de cel·les usant br o transformant '-' en punts
-        if (content.includes('- ')) {
-            content = content.replace(/- /g, '• ').replace(/\n/g, '<br/>');
-        }
+      // Estils per a les categories específiques del Grup
+      let rowClass = 'hover:bg-slate-50 transition-colors';
+      if (lowerRow.includes('fortaleses') || lowerRow.includes('oportunitats') || lowerRow.includes('debilitats') || lowerRow.includes('amenaces')) {
+        rowClass = 'bg-slate-50 font-bold';
+      }
+
+      html += `<tr class="${rowClass}">` + cells.map((c, index) => {
+        const content = c.trim().replace(/\*\*/g, '');
+        let cellClass = 'px-6 py-4 text-sm text-slate-700 border-r border-slate-100 last:border-0';
         
-        return `<td class="px-6 py-4 text-sm text-slate-700 border-r border-slate-100 last:border-0">${content}</td>`;
+        // Colorit segons paraula clau (només si és la primera columna d'identificació o el contingut ho marca)
+        if (content.toUpperCase().includes('CRÍTICA')) {
+          cellClass += ' bg-red-50 text-red-700 font-bold';
+        } else if (content.toUpperCase().includes('DESTACADA')) {
+          cellClass += ' bg-emerald-50 text-emerald-700 font-bold';
+        } else if (content.toUpperCase().includes('IRRELEVANT')) {
+          cellClass += ' bg-slate-100 text-slate-400 font-medium italic';
+        }
+
+        let innerHTML = content;
+        if (innerHTML.includes('- ')) {
+          innerHTML = innerHTML.replace(/- /g, '• ').replace(/\n/g, '<br/>');
+        }
+
+        return `<td class="${cellClass}">${innerHTML}</td>`;
       }).join('') + '</tr>';
     }
   });

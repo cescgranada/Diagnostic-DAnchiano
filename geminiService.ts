@@ -16,59 +16,64 @@ FLUX DE TREBALL OBLIGATORI:
    Comença l'informe OBLIGATÒRIAMENT amb: "# Informe de Diagnòstic: [Nom de la Comissió]".
 
 1. IDENTIFICACIÓ DE COMPETÈNCIES DEL GRUP (L'IDEAL):
-   Identifica quines de les 18 competències oficials defineixen el GRUP segons aquests tipus:
-   - Crítiques: Les 3 o 4 essencials per al lloc.
-   - Destacades: Aquelles que el Grup valora o necessita especialment.
-   - Irrellevants: Les que no són prioritàries per a aquest context.
+   Abans de la taula, defineix breument les categories segons el Model D'Anchiano:
+   - **Crítiques**: Competències imprescindibles i fonamentals per al lloc; sense elles no es pot assolir l'èxit.
+   - **Destacades**: Competències que aporten un valor afegit significatiu i que el grup prioritza.
+   - **Irrellevants**: Competències que no tenen un impacte necessari en l'execució de les tasques d'aquest context.
+
+   Identifica quines de les 18 competències oficials defineixen el GRUP en una TAULA. 
+   IMPORTANT: Per facilitar el colorit visual, utilitza exactament les paraules "CRÍTICA", "DESTACADA" o "IRRELLEVANT" en majúscules a la primera columna.
    
-   Presenta aquesta identificació en una TAULA:
    | Tipus (Grup) | Competència Oficial | Motiu de la classificació |
    | :--- | :--- | :--- |
+   | CRÍTICA | [Nom] | [Justificació] |
+   | DESTACADA | [Nom] | [Justificació] |
+   | IRRELEVANT | [Nom] | [Justificació] |
 
 2. TAULA COMPARATIVA DE COINCIDÈNCIA (NOMÉS DESTACADES DEL GRUP):
    Escriu la frase: "Anàlisi comparativa de la comissió: [Nom o descripció de la comissió]".
    
-   Genera una taula de 4 columnes on a la primera columna NOMÉS hi apareguin les competències que has classificat com a "DESTACADES" pel GRUP en el punt anterior. Avalua com s'ajusta la COMISSIÓ a cada una:
-   - Coincidència ALTA (>=9): On la comissió excel·leix.
-   - Coincidència MITJANA (5-8): Marge de millora.
-   - Coincidència BAIXA (<5): Mancança crítica.
+   Genera una taula de 4 columnes on a la primera columna NOMÉS hi apareguin les competències classificades anteriorment com a "DESTACADA" pel GRUP. Avalua la COMISSIÓ:
+   - Coincidència ALTA (>=9): Nota i justificació a la columna 2.
+   - Coincidència MITJANA (5-8): Nota i justificació a la columna 3.
+   - Coincidència BAIXA (<5): Nota i justificació a la columna 4.
    
-   Omple la columna corresponent amb la nota i justificació. Usa un guió "-" per a les columnes on no hi hagi coincidència.
-   
+   Usa un guió "-" per a les columnes sense valor.
+
    | Competència DESTACADA (Grup) | Coincidència ALTA (>=9) | Coincidència MITJANA (5-8) | Coincidència BAIXA (<5) |
    | :--- | :--- | :--- | :--- |
 
 3. DIAGNÒSTIC DAFO TRADICIONAL (FORMAT LLISTA):
-   Genera una taula 2x2. Dins de cada cel·la, presenta els punts en format llista (usant el guió "-").
+   Genera una taula 2x2. Dins de cada cel·la, presenta els punts en format llista (usant "-").
    | Fortaleses | Oportunitats |
    | :--- | :--- |
-   | - Punt 1\n- Punt 2 | - Punt 1\n- Punt 2 |
+   | - Punt A\n- Punt B | - Punt C\n- Punt D |
    | Debilitats | Amenaces |
-   | - Punt 1\n- Punt 2 | - Punt 1\n- Punt 2 |
+   | - Punt E\n- Punt F | - Punt G\n- Punt H |
 
 4. PLA D'ACCIÓ (3 o 4 Objectius SMART):
-   L'usuari ha de poder triar. Per a cada objectiu, primer l'enunciat i després el desglossament:
-   ### Objectiu [Número]: [Títol de l'objectiu]
-   [Descripció breu]
+   Proposa 3 o 4 objectius perquè l'usuari triï. Per a cada un:
+   ### Objectiu [Número]: [Títol]
+   [Descripció de l'objectiu]
    - **S (Específic)**: Detall de l'acció i competència.
-   - **M (Mesurable)**: Com en farem el seguiment.
-   - **A (Assolible)**: Realisme segons la comissió.
-   - **R (Rellevant)**: Connexió amb el Model D'Anchiano/Leonardo.
-   - **T (Temporitzat)**: Termini d'execució.
+   - **M (Mesurable)**: Indicador.
+   - **A (Assolible)**: Realisme.
+   - **R (Rellevant)**: Connexió amb Leonardo.
+   - **T (Temporitzat)**: Termini.
 
 DIRECTRIUS DE FORMAT:
-- No doblis la numeració.
+- No doblis la numeració. Si poses "1.", no posis "1.1." a sota si és el mateix nivell.
 - Idioma: Català.
-- Sigues extremadament rigorós amb les notes (9+ alta, 5-8 mitjana, <5 baixa).
+- Sigues extremadament rigorós amb les notes.
 `;
 
 export async function performAnalysis(params: AnalysisParams): Promise<string> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const parts: any[] = [];
-  let textPrompt = `SI US PLAU, GENERA EL DIAGNÒSTIC D'ANCHIANO:\n\n`;
-  textPrompt += `**DADES DEL GRUP (IDEAL):**\n${params.groupProfile || "Consulta els arxius."}\n\n`;
-  textPrompt += `**DADES DE LA COMISSIÓ (REALITAT):**\n${params.commissionProfile || "Consulta els arxius."}\n\n`;
+  let textPrompt = `GENERA L'INFORME D'ANCHIANO AMB LES SEGÜENTS DADES:\n\n`;
+  textPrompt += `**MODEL GRUP (IDEAL):**\n${params.groupProfile || "Consulta els documents."}\n\n`;
+  textPrompt += `**COMISSIÓ ACTUAL (REALITAT):**\n${params.commissionProfile || "Consulta els documents."}\n\n`;
   parts.push({ text: textPrompt });
 
   if (params.groupFile) {
@@ -87,9 +92,9 @@ export async function performAnalysis(params: AnalysisParams): Promise<string> {
         temperature: params.temperature,
       },
     });
-    return response.text || "No s'ha pogut generar l'informe.";
+    return response.text || "Informe no generat.";
   } catch (error) {
-    console.error("Gemini Error:", error);
-    throw new Error("S'ha produït un error en la generació. Revisa els fitxers.");
+    console.error("Gemini API Error:", error);
+    throw new Error("S'ha produït un error de connexió amb l'IA.");
   }
 }
