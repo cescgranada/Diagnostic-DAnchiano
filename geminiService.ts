@@ -12,49 +12,57 @@ FONT DE VERITAT (Diccionari de 18 Competències):
 
 FLUX DE TREBALL OBLIGATORI:
 
-1. EXTRACCIÓ I IDENTIFICACIÓ DE COMPETÈNCIES CRÍTIQUES:
+0. TÍTOL DE L'INFORME:
+   Comença l'informe OBLIGATÒRIAMENT amb el títol: "# Informe de Diagnòstic: [Nom de la Comissió]". 
+   Identifica el nom a partir dels fitxers o el text; si no n'hi ha, usa "Comissió Analitzada".
+
+1. IDENTIFICACIÓ DE COMPETÈNCIES CRÍTIQUES, DESTACADES I IRRELLEVANTS:
    - Identifica les 3 o 4 competències més importants pel lloc/grup.
-   - Marca aquelles que destaquen positivament.
-   - Indica quines competències de les 18 són irrellevants pel cas específic.
+   - Genera una TAULA amb les competències on la comissió destaca positivament i aquelles que són irrellevants pel context:
+   | Tipus | Competència (de les 18) | Motiu/Justificació |
+   | :--- | :--- | :--- |
+   | Destacada | [Nom] | [Per què destaca] |
+   | Irrellevant | [Nom] | [Per què no és crítica aquí] |
 
 2. TAULA COMPARATIVA DE COINCIDÈNCIA:
-   Genera una taula de 4 columnes on classifiquis les competències segons la seva puntuació (real o inferida del context):
-   - Coincidència ALTA: Puntuació 9 o superior (on l'equip excel·leix).
-   - Coincidència MITJANA: Puntuació 5, 6, 7 o 8 (marge de millora).
-   - Coincidència BAIXA: Puntuació inferior a 5 (mancança clara).
+   Genera la taula de 4 columnes segons la puntuació:
+   - Coincidència ALTA: 9 o superior.
+   - Coincidència MITJANA: 5, 6, 7 o 8.
+   - Coincidència BAIXA: Inferior a 5.
+   
+   Important: Omple la columna corresponent amb la nota i justificació, i usa un guió "-" per a les altres.
    
    | Competència (Oficial) | Coincidència ALTA (>=9) | Coincidència MITJANA (5-8) | Coincidència BAIXA (<5) |
    | :--- | :--- | :--- | :--- |
-   | [Nom] | [Descripció] | [Descripció] | [Descripció + Explicació risc] |
 
-3. DIAGNÒSTIC DAFO TRADICIONAL (En format taula):
-   Crea una taula 2x2 per al DAFO:
+3. DIAGNÒSTIC DAFO TRADICIONAL:
+   Taula 2x2 neta. No usis negretes (**) dins de les cel·les per no embrutar el format.
    | Fortaleses | Oportunitats |
    | :--- | :--- |
-   | [Punts forts interns] | [Possibilitats de creixement] |
-   | **Debilitats** | **Amenaces** |
-   | [Mancances internes] | [Riscos externs/empresarials] |
+   | Debilitats | Amenaces |
 
-4. PLA D'ACCIÓ SMART:
-   Proposa millores basades en el DAFO amb etiquetes explícites:
-   - **S (Específic)**: Competència concreta de les 18.
-   - **M (Mesurable)**: Indicador d'èxit.
-   - **A (Assolible)**: Acció realista.
-   - **R (Rellevant)**: Connexió amb l'arquetip de Leonardo (home/dona complet).
-   - **T (Temporitzat)**: Data/Termini.
+4. PLA D'ACCIÓ (Proposa 3 o 4 Objectius SMART):
+   L'usuari ha de poder triar quins portar a terme. Per a cada objectiu:
+   ### Objectiu [Número]: [Títol]
+   - **S (Específic)**: Acció i competència.
+   - **M (Mesurable)**: Indicador.
+   - **A (Assolible)**: Realisme.
+   - **R (Rellevant)**: Connexió amb Leonardo.
+   - **T (Temporitzat)**: Termini.
 
-DIRECTRIUS:
+DIRECTRIUS DE FORMAT:
+- No doblis la numeració. Si ja poses un número (ex: 1.), no n'afegeixis un altre al renderitzar.
 - Idioma: Català.
-- Rigor absolut amb les 18 competències oficials.
+- Rigor: Només les 18 competències oficials.
 `;
 
 export async function performAnalysis(params: AnalysisParams): Promise<string> {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const parts: any[] = [];
-  let textPrompt = `ANALITZA ELS SEGÜENTS PERFILS:\n\n`;
-  textPrompt += `**Perfil de Grup:**\n${params.groupProfile || "Document adjunt."}\n\n`;
-  textPrompt += `**Perfil de la Comissió:**\n${params.commissionProfile || "Document adjunt."}\n\n`;
+  let textPrompt = `REALITZA EL DIAGNÒSTIC D'ANCHIANO:\n\n`;
+  textPrompt += `**GRUP (Ideal):**\n${params.groupProfile || "Document adjunt."}\n\n`;
+  textPrompt += `**COMISSIÓ (Realitat):**\n${params.commissionProfile || "Document adjunt."}\n\n`;
   parts.push({ text: textPrompt });
 
   if (params.groupFile) {
@@ -73,8 +81,9 @@ export async function performAnalysis(params: AnalysisParams): Promise<string> {
         temperature: params.temperature,
       },
     });
-    return response.text || "Error.";
+    return response.text || "Informe buit.";
   } catch (error) {
-    throw new Error("Error en l'anàlisi de Gemini.");
+    console.error("Gemini Error:", error);
+    throw new Error("Error en l'anàlisi de dades.");
   }
 }
